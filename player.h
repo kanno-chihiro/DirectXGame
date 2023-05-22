@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Audio.h"
 #include "DirectXCommon.h"
@@ -10,37 +10,40 @@
 #include "WorldTransform.h"
 
 /// <summary>
-/// ©ƒLƒƒƒ‰
+/// è‡ªã‚­ãƒ£ãƒ©
 /// </summary>
 
 class Player {
 public:
 
 	///< summary>
-	/// ‰Šú‰»
+	/// åˆæœŸåŒ–
 	///</summary>
 	void Initialize(Model*model,uint32_t textureHandle);
 
 	/// <summary>
-	/// –ˆƒtƒŒ[ƒ€ˆ—
+	/// æ¯ãƒ•ãƒ¬ãƒ¼ãƒ å‡¦ç†
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// •`‰æ
+	/// æç”»
 	/// </summary>
 
 	void Draw(ViewProjection &viewProjection);
 
 private:
 
-	//ƒ[ƒ‹ƒh•ÏŠ·ƒf[ƒ^
+	//ãƒ¯ãƒ¼ãƒ«ãƒ‰å¤‰æ›ãƒ‡ãƒ¼ã‚¿
 	WorldTransform worldTransform_;
 
-	//ƒ‚ƒfƒ‹
+	//ãƒ¢ãƒ‡ãƒ«
 	Model* model_ = nullptr;
 
-	//ƒeƒNƒXƒ`ƒƒƒnƒ“ƒhƒ‹
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒ³ãƒ‰ãƒ«
 	uint32_t textureHandle_ = 0u;
+
+	//ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰å…¥åŠ›
+	Input* input_ = nullptr;
 
 };
