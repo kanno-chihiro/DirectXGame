@@ -8,6 +8,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "MatrixTrans.h"
 
 /// <summary>
 /// 自キャラ
@@ -39,6 +40,8 @@ private:
 
 	//モデル
 	Model* model_ = nullptr;
+
+	Input* input_=nullptr;
 
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;

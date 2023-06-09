@@ -14,6 +14,8 @@
 /// ゲームシーン
 /// </summary>
 class GameScene {
+	//スプライト
+	Sprite* sprite_ = nullptr;
 
 public: // メンバ関数
 	/// <summary>

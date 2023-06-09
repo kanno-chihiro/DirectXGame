@@ -23,6 +23,9 @@ void GameScene::Initialize() {
 	//3Dモデルの生成
 	model_ = Model::Create();
 
+	//スプライトの生成
+	sprite_ = Sprite::Create(textureHandle_,{100,50});
+
 	//ビュープロジェクション
 	viewProjection_.Initialize();
 
