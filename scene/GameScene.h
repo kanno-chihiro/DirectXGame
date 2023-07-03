@@ -9,6 +9,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <player.h>
+#include <DebugCamera.h>
 
 /// <summary>
 /// ゲームシーン
@@ -16,6 +17,10 @@
 class GameScene {
 	//スプライト
 	Sprite* sprite_ = nullptr;
+
+	bool isDebugCameraActive_ = false;
+	//デバッグカメラ
+	DebugCamera* debugCamera_ = nullptr;
 
 public: // メンバ関数
 	/// <summary>

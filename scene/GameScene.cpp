@@ -9,6 +9,7 @@ GameScene::~GameScene() {
 	delete model_;
 	// 自キャラの解放
 	delete player_;
+	delete debugCamera_;
 }
 
 void GameScene::Initialize() {
@@ -16,6 +17,7 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+	debugCamera_ = new DebugCamera(-18, 18);
 
 	//ファイル名を指定してテクスチャを読み込む
 	textureHandle_ = TextureManager::Load("DM1.jpg");
@@ -38,6 +40,24 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 //自キャラの更新
 	player_->Update();
+	debugCamera_->Update();
+
+#ifdef _DEBUG
+	if (input_->TriggerKey(DIK_SPACE)) {
+		isDebugCameraActive_ = true;
+	}
+#endif 
+	//カメラ
+	if (isDebugCameraActive_) {
+		debugCamera_->Update();
+		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+		//ビュープロジェクション行列の転送
+		viewProjection_.TransferMatrix();
+	} else {
+	//ビュープロジェクション行列の更新と転送
+		viewProjection_.UpdateMatrix();
+	}
 }
 
 void GameScene::Draw() {

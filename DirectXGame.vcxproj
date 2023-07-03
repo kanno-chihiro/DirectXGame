@@ -111,8 +111,12 @@
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MatrixTrans.cpp" />
+    <ClCompile Include="Matrix\MatrixTransform.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="PlayerBullet.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
+    <ClCompile Include="Vector\VectorTransform.cpp" />
+    <ClCompile Include="WorldTransformEx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2d\ImGuiManager.h" />
@@ -143,8 +147,13 @@
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector4.h" />
     <ClInclude Include="MatrixTrans.h" />
+    <ClInclude Include="Matrix\Matrix2x2.h" />
+    <ClInclude Include="Matrix\Matrix3x3.h" />
+    <ClInclude Include="Matrix\MatrixTransform.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="PlayerBullet.h" />
     <ClInclude Include="scene\GameScene.h" />
+    <ClInclude Include="Vector\VectorTransform.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\TerrainPS.hlsl">

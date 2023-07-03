@@ -1,49 +1,61 @@
-#pragma once
-
-#include "Audio.h"
-#include "DirectXCommon.h"
+ï»¿#pragma once
 #include "Input.h"
 #include "Model.h"
-#include "SafeDelete.h"
-#include "Sprite.h"
-#include "ViewProjection.h"
-#include "WorldTransform.h"
-#include "MatrixTrans.h"
-
+#include <list>
+#include "Matrix/MatrixTransform.h"
+#include"Vector/VectorTransform.h"
+#include <PlayerBullet.h>
 /// <summary>
-/// ©ƒLƒƒƒ‰
+/// è‡ªã‚­ãƒ£ãƒ©
 /// </summary>
 
 class Player {
 public:
+	///<summary>
+	///ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	/// <summary>
+	~Player();
+
+	//å¼¾
+	PlayerBullet* bullet_ = nullptr;
+	std::list<PlayerBullet*> bullets_;
+
+	///<summary>
+	///æ”»æ’ƒ
+	/// <summary>
+	void Attack(Vector3& position);
 
 	///< summary>
-	/// ‰Šú‰»
+	/// åˆæœŸåŒ–
 	///</summary>
 	void Initialize(Model*model,uint32_t textureHandle);
 
 	/// <summary>
-	/// –ˆƒtƒŒ[ƒ€ˆ—
+	/// æ¯ãƒ•ãƒ¬ãƒ¼ãƒ å‡¦ç†
 	/// </summary>
 	void Update();
 
 	/// <summary>
-	/// •`‰æ
+	/// æç”»
 	/// </summary>
 
 	void Draw(ViewProjection &viewProjection);
 
 private:
 
-	//ƒ[ƒ‹ƒh•ÏŠ·ƒf[ƒ^
+	//ãƒ¯ãƒ¼ãƒ«ãƒ‰å¤‰æ›ãƒ‡ãƒ¼ã‚¿
 	WorldTransform worldTransform_;
 
-	//ƒ‚ƒfƒ‹
+	//ãƒ¢ãƒ‡ãƒ«
 	Model* model_ = nullptr;
 
 	Input* input_=nullptr;
 
-	//ƒeƒNƒXƒ`ƒƒƒnƒ“ƒhƒ‹
+	//ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒ³ãƒ‰ãƒ«
 	uint32_t textureHandle_ = 0u;
+
+	MatrixTransform* matrix_ = new MatrixTransform();
+	VectorTransform* vectorTransform_ = new VectorTransform();
+
 
 };

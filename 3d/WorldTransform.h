@@ -33,6 +33,10 @@ struct WorldTransform {
 	/// 初期化
 	/// </summary>
 	void Initialize();
+	///<summary>
+	/// 行列を計算・転送する
+	/// </summary>
+	void UpdateMatrix();
 	/// <summary>
 	/// 定数バッファ生成
 	/// </summary>
@@ -45,4 +49,5 @@ struct WorldTransform {
 	/// 行列を転送する
 	/// </summary>
 	void TransferMatrix();
+	
 };
