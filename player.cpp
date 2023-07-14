@@ -3,7 +3,7 @@
 
 Player::~Player() {
 	// bullet_の解放
-	for (PlayerBullet* bullet : bullets_) {
+	for (PlayerBullet* bul9let : bullets_) {
 		delete bullet_;
 	}
 }
@@ -31,9 +31,16 @@ void Player::Attack(Vector3& position) {
 		//	bullet_ = nullptr;
 		//}
 
+		//弾の速度
+		const float kBulletSpeed = 1.0f;
+		Vector3 velocity(0, 0, kBulletSpeed);
+
+		//速度ベクトルを自機の向きに合わせて回転させる
+		velocity = TransformNormal(velocity,worldTransform_.matWorld_);
+
 		//弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_,position);
+		newBullet->Initialize(model_,position,velocity);
 
 		//弾を登録する
 		//bullet_ = newBullet;
@@ -49,15 +56,15 @@ void Player::Update()
 	Vector3 move = {0, 0, 0};
 
 	// 回転速さ{ラジアン/frame}
-	// const float kRotSpeed = 0.02f;
+	const float kRotSpeed = 0.02f;
 
 	// 押した方向で移動ベクトルを変更
 	if (input_->PushKey(DIK_A)) {
 		// worldTransformのY軸まわり角度を回転速さ分減算する
-		worldTransform_.translation_.y;
+		worldTransform_.rotation_.y -= kRotSpeed;
 	} else if (input_->PushKey(DIK_D)) {
 		// worldTransformのY軸まわり角度を回転速さ分加算する
-		worldTransform_.translation_.y;
+		worldTransform_.rotation_.y += kRotSpeed;
 	}
 
 	ImGui::Begin("Debug");

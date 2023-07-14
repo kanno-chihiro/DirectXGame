@@ -25,7 +25,7 @@ struct WorldTransform {
 	// ローカル座標
 	Vector3 translation_ = {0, 0, 0};
 	// ローカル → ワールド変換行列
-	Matrix4x4 matWorld_;
+	Matrix4x4 matWorld_ = {0, 0, 0};
 	// 親となるワールド変換へのポインタ
 	const WorldTransform* parent_ = nullptr;
 
@@ -33,7 +33,7 @@ struct WorldTransform {
 	/// 初期化
 	/// </summary>
 	void Initialize();
-	///<summary>
+	///< summary>
 	/// 行列を計算・転送する
 	/// </summary>
 	void UpdateMatrix();
@@ -49,5 +49,4 @@ struct WorldTransform {
 	/// 行列を転送する
 	/// </summary>
 	void TransferMatrix();
-	
 };
