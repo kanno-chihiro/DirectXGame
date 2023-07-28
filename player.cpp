@@ -1,6 +1,7 @@
 ﻿#include<player.h>
 #include "ImGuiManager.h"
 
+
 Player::~Player() {
 	// bullet_の解放
 	for (PlayerBullet* bul9let : bullets_) {
