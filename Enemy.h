@@ -39,4 +39,14 @@ public:
 
 		//テクスチャハンドル
 	    uint32_t textureHandle__ = 0u;
+
+		// 行動フェーズ
+	    enum class Phase {
+		    Approach, // 接近する
+		    Leave,    // 離脱する
+	    };
+
+	    Phase phase_ = Enemy::Phase::Approach;
+
+
 };

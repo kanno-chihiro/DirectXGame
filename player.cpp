@@ -16,7 +16,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle)
 	assert(model);
 	model_ = model;
 	textureHandle_ = textureHandle;
-	worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
+	worldTransform_.translation_ = {5.0f, 0.0f, 0.0f};
 	worldTransform_.Initialize();
 	
 };

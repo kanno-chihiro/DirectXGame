@@ -10,13 +10,12 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 	assert(model);
 	model__ = model;
 	textureHandle__ = textureHandle;
-	worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
+	worldTransform_.translation_ = {0.0f, 3.0f, +50.0f};
 	worldTransform_.Initialize();
 };
 
 void Enemy::Update(){
 
-	
 	// 行列を定数バッファに転送
 
 	const float kClientVelocity = 0.2f;
@@ -25,8 +24,27 @@ void Enemy::Update(){
 	// 回転速さ{ラジアン/frame}
 	const float kEnemySpeed = 0.2f;
 
-	worldTransform_.translation_.z -= kEnemySpeed;
 	
+
+	switch (phase_) {
+	case Enemy::Phase::Approach:
+	default:
+
+		//移動(ベクトルを加算)
+		worldTransform_.translation_.z -= kEnemySpeed;
+		//規定の位置に到達したら離脱
+		if (worldTransform_.translation_.z < 0.0f) {
+			phase_ = Enemy::Phase::Leave;
+		}
+		break;
+	case Enemy::Phase::Leave:
+			//移動(ベクトルを加算)
+		worldTransform_.translation_.x -= kEnemySpeed;
+		worldTransform_.translation_.y += kEnemySpeed;
+		worldTransform_.translation_.z -= kEnemySpeed;
+		break;
+	}
+
 
 	// 行列の更新
 	worldTransform_.UpdateMatrix();
