@@ -4,6 +4,7 @@
 #include <list>
 #include "Matrix/MatrixTransform.h"
 #include"Vector/VectorTransform.h"
+#include "EnemyBullet.h"
 //#include <EnemyBullet.h>
 
 /// <summary>
@@ -12,10 +13,22 @@
 
 class Enemy {
 public:
+
+	~Enemy();
+
+	static const int kFireinterval = 60;
+
+	// 弾
+	EnemyBullet* bullet__ = nullptr;
+	std::list<EnemyBullet*> bullets__;
+
+	void Fire(Vector3& position);
+
 	///< summary>
 	/// 初期化
 	///</summary>
 	void Initialize(Model* model, uint32_t textureHandle);
+
 
 	/// <summary>
 	/// 毎フレーム処理
@@ -39,6 +52,8 @@ public:
 
 		//テクスチャハンドル
 	    uint32_t textureHandle__ = 0u;
+
+		int32_t BulletTimer = 0;
 
 		// 行動フェーズ
 	    enum class Phase {
