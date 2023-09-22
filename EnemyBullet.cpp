@@ -1,33 +1,40 @@
-#include "EnemyBullet.h"
-#include "ImGuiManager.h"
-#include <Model.h>
+ï»¿#include "EnemyBullet.h"
+#include "MatrixTrans.h"
+#include <cassert>
 
 
 void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity){
-	// NULLƒ|ƒCƒ“ƒ^
+	// NULLãƒã‚¤ãƒ³ã‚¿
 	assert(model);
 
-	model__ = model;
-	// ƒeƒNƒXƒ`ƒƒ“Ç‚İ‚İ
-	textureHandle__ = TextureManager::Load("Block.png");
+	model_ = model;
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£èª­ã¿è¾¼ã¿
+	EnemyBullettextureHandle_ = TextureManager::Load("RED.png");
 
 	worldTransform_.Initialize();
 
-	// ˆø”‚Åó‚¯æ‚Á‚½‰Šú‰»À•W‚ğƒZƒbƒg
+	// å¼•æ•°ã§å—ã‘å–ã£ãŸåˆæœŸåŒ–åº§æ¨™ã‚’ã‚»ãƒƒãƒˆ
 	worldTransform_.translation_ = position;
 
-	// ˆø”‚Åó‚¯æ‚Á‚½‘¬“x‚ğƒƒ“ƒo•Ï”‚É‘ã“ü
+	// å¼•æ•°ã§å—ã‘å–ã£ãŸé€Ÿåº¦ã‚’ãƒ¡ãƒ³ãƒå¤‰æ•°ã«ä»£å…¥
 	velocity_ = velocity;
 
 	
 };
 
 void EnemyBullet::Update() {
-	worldTransform_.UpdateMatrix();
+
 	worldTransform_.translation_ = Add(worldTransform_.translation_, velocity_);
+	worldTransform_.UpdateMatrix();
+
+	if (--deathTimer_ <= 0)
+	{
+		isDead_ = true;
+	}
+
 }
 
 void EnemyBullet::Draw(const ViewProjection& viewProjection) {
-	// ƒ‚ƒfƒ‹
-	model__->Draw(worldTransform_, viewProjection, textureHandle__);
+	// ãƒ¢ãƒ‡ãƒ«
+	model_->Draw(worldTransform_, viewProjection, EnemyBullettextureHandle_);
 };

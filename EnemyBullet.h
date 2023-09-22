@@ -1,27 +1,48 @@
-#include "MatrixTrans.h"
+ï»¿#pragma once
+#include "Model.h"
+#include "WorldTransform.h"
 
 class EnemyBullet {
 public:
-	// ‘¬“x
-	Vector3 velocity_ = {0, 0};
+	
 
-	//‰Šú‰»
+	//åˆæœŸåŒ–
 	void Initialize(Model* model, const Vector3& position, const Vector3& velocity);
 	
-	//XV
+	//æ›´æ–°
 	void Update();
 
-	//•`‰æ
+	//æç”»
 	void Draw(const ViewProjection& viewProjection);
+	
+	bool IsDead() const { return isDead_; }
 
-	private:
+private:
 
-	// ƒ[ƒ‹ƒh•ÏŠ·ƒf[ƒ^
+	// ãƒ¯ãƒ¼ãƒ«ãƒ‰å¤‰æ›ãƒ‡ãƒ¼ã‚¿
 	WorldTransform worldTransform_;
+	
+	ViewProjection viewprojection_; 
 
-	// ƒ‚ƒfƒ‹
-	Model* model__ = nullptr;
+	// ãƒ¢ãƒ‡ãƒ«
+	Model* model_ = nullptr;
 
-	// ƒeƒNƒXƒ`ƒƒƒnƒ“ƒhƒ‹
-	uint32_t textureHandle__ = 0u;
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒãƒ³ãƒ‰ãƒ«
+	uint32_t EnemyBullettextureHandle_ = 0u;
+
+
+	// é€Ÿåº¦
+	Vector3 velocity_ ;
+
+	// å¯¿å‘½
+	static const int32_t kListTime = 60 * 5;
+
+	// ãƒ‡ã‚¹ã‚¿ã‚¤ãƒãƒ¼
+	int32_t deathTimer_ = kListTime;
+
+	// ãƒ‡ã‚¹ãƒ•ãƒ©ã‚°
+	bool isDead_ = false;
+
+
 };
+

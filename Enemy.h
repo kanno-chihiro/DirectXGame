@@ -1,33 +1,29 @@
 ﻿#pragma once
-#include "Input.h"
 #include "Model.h"
 #include <list>
-#include "Matrix/MatrixTransform.h"
-#include"Vector/VectorTransform.h"
+#include "WorldTransform.h"
 #include "EnemyBullet.h"
-//#include <EnemyBullet.h>
 
 /// <summary>
 /// 敵
 /// </summary>
 
+enum Phase { 
+	Approach,
+	Leave
+};
+
 class Enemy {
 public:
 
-	~Enemy();
+	void Initialize(Model* model, uint32_t textureHandle);
 
-	static const int kFireinterval = 60;
 
-	// 弾
-	EnemyBullet* bullet__ = nullptr;
-	std::list<EnemyBullet*> bullets__;
-
-	void Fire(Vector3& position);
 
 	///< summary>
 	/// 初期化
 	///</summary>
-	void Initialize(Model* model, uint32_t textureHandle);
+	
 
 
 	/// <summary>
@@ -41,27 +37,38 @@ public:
 
 	void Draw(ViewProjection& viewProjection);
 
+	void Fire(Vector3& position);
+
+	~Enemy();
+
+	static const int kFireinterval = 60;
+
+	void Phase_();
+
 	private:
 		//ワールド変換データ
 	    WorldTransform worldTransform_;
 
-		//モデル
-	    Model* model__ = nullptr;
+		ViewProjection viewProjection_;
 
-		Input* input_ = nullptr;
+
+		//モデル
+	    Model* model_ = nullptr;
+
+		
 
 		//テクスチャハンドル
-	    uint32_t textureHandle__ = 0u;
+	    uint32_t EnemytextureHandle_ = 0u;
+
+		Phase phase_ = phase_;
+
+	    EnemyBullet * Enemybullet_ = nullptr;
+
+		std::list<EnemyBullet*> Enemybullets_;
+
 
 		int32_t BulletTimer = 0;
 
-		// 行動フェーズ
-	    enum class Phase {
-		    Approach, // 接近する
-		    Leave,    // 離脱する
-	    };
-
-	    Phase phase_ = Enemy::Phase::Approach;
-
+	   
 
 };
