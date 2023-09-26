@@ -1,74 +1,69 @@
 ﻿#pragma once
-#include "Model.h"
-#include <list>
-#include "WorldTransform.h"
 #include "EnemyBullet.h"
+#include "Model.h"
+#include "WorldTransform.h"
+#include <list>
 
-/// <summary>
-/// 敵
-/// </summary>
-
-enum Phase { 
+enum class Phase {
 	Approach,
-	Leave
+	Leave,
 };
+
+//
+class Player;
 
 class Enemy {
 public:
-
+	
 	void Initialize(Model* model, uint32_t textureHandle);
 
-
-
-	///< summary>
-	/// 初期化
-	///</summary>
 	
-
-
-	/// <summary>
-	/// 毎フレーム処理
-	/// </summary>
 	void Update();
 
-	/// <summary>
-	/// 描画
-	/// </summary>
-
+	
 	void Draw(ViewProjection& viewProjection);
 
-	void Fire(Vector3& position);
+	
+	void Fire(Vector3& position_);
 
+	
 	~Enemy();
 
-	static const int kFireinterval = 60;
+	
+	static const int kFireInterval = 60;
 
+	
 	void Phase_();
 
-	private:
-		//ワールド変換データ
-	    WorldTransform worldTransform_;
+	
+	void SetPlayer(Player* player) { player_ = player; }
 
-		ViewProjection viewProjection_;
+	
+	Vector3 GetWorldPosition();
 
+private:
+	
+	WorldTransform worldTransform_;
 
-		//モデル
-	    Model* model_ = nullptr;
+	ViewProjection viewProjection_;
 
-		
+	
+	Model* model_ = nullptr;
 
-		//テクスチャハンドル
-	    uint32_t EnemytextureHandle_ = 0u;
+	uint32_t EnemytextureHandle_ = 0u;
 
-		Phase phase_ = phase_;
+	
+	Phase phase_ = phase_;
 
-	    EnemyBullet * Enemybullet_ = nullptr;
+	
+	EnemyBullet* Enemybullet_ = nullptr;
 
-		std::list<EnemyBullet*> Enemybullets_;
+	
+	std::list<EnemyBullet*> Enemybullets_;
 
+	
+	int32_t fireTimer = 0;
 
-		int32_t BulletTimer = 0;
-
-	   
-
+	
+	Player* player_ = nullptr;
 };

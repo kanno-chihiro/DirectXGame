@@ -16,12 +16,7 @@
 /// ゲームシーン
 /// </summary>
 class GameScene {
-	//スプライト
-	Sprite* sprite_ = nullptr;
-
-	bool isDebugCameraActive_ = false;
-	//デバッグカメラ
-	DebugCamera* debugCamera_ = nullptr;
+	
 
 public: // メンバ関数
 	/// <summary>
@@ -57,21 +52,32 @@ private: // メンバ変数
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0;
 
-	//tekiテクスチャハンドル
-	uint32_t textureHandle__ = 0;
+	
 	
 	//3Dモデルデータ
 	Model* model_ = nullptr;
 
+	//ワールド変換
+	WorldTransform worldTransform_;
+	
 	//ビュープロジェクション
 	ViewProjection viewProjection_;
+
+	// 自キャラ
+	Player* player_ = nullptr;
+	float inputFloat3[3] = {0, 0, 0};
+
+	bool isDebugCameraActive_ = false;
+
+	DebugCamera* debugCamera_ = nullptr;
 
 	// 敵キャラ
 	Enemy* enemy_ = nullptr;
 
-	//自キャラ
-	Player* player_ = nullptr;
+	// tekiテクスチャハンドル
+	uint32_t EnemytextureHandle_ = 0;
 
+	
 	
 
 	/// <summary>

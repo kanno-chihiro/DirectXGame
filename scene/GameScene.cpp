@@ -1,19 +1,19 @@
 #include "GameScene.h"
+#include "AxisIndicator.h"
+#include "Enemy.h"
+#include "ImGuiManager.h"
+#include "Player.h"
+#include "PlayerBullet.h"
 #include "TextureManager.h"
 #include <cassert>
-
 
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
 	delete model_;
-	// 敵キャラの解放
-	delete enemy_;
-
-	// 自キャラの解放
 	delete player_;
 	delete debugCamera_;
-	
+	delete enemy_;
 }
 
 void GameScene::Initialize() {
@@ -21,56 +21,91 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
-	debugCamera_ = new DebugCamera(-18, 18);
 
-	//ファイル名を指定してテクスチャを読み込む
 	textureHandle_ = TextureManager::Load("DM1.jpg");
-	textureHandle__ = TextureManager::Load("dorumage.jpg");
-	
-	//3Dモデルの生成
-	model_ = Model::Create();
+	// textureHandle_ = TextureManager::Load("debugfont.png");
 
-	//スプライトの生成
-	sprite_ = Sprite::Create(textureHandle_,{100,50});
+	EnemytextureHandle_ = TextureManager::Load("dorumage.jpg");
 
-	//ビュープロジェクション
+	worldTransform_.Initialize();
+
 	viewProjection_.Initialize();
 
-	// 敵キャラの生成
-	enemy_ = new Enemy();
-	// 敵キャラの初期化
-	enemy_->Initialize(model_, textureHandle__);
+	//
+	// プレイヤー
+	//
 
-	//自キャラの生成
+	model_ = Model::Create();
+
+	// 自キャラの生成
 	player_ = new Player();
-	//自キャラの初期化
-	player_->Initialize( model_,  textureHandle_);
 
-	
+	// 自キャラの初期化
+	player_->Initialize(model_, textureHandle_);
+
+	// 敵キャラの初期化
+	enemy_ = new Enemy();
+
+	enemy_->Initialize(model_, EnemytextureHandle_);
+
+	// 敵キャラに自キャラのアドレスを渡す
+	enemy_->SetPlayer(player_);
+
+	// デバックカメラの生成
+	debugCamera_ = new DebugCamera(1280, 720);
+
+	// 軸方向表示の表示を有効にする
+	AxisIndicator::GetInstance()->SetVisible(true);
+	// 軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
+	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 }
 
 void GameScene::Update() {
-	// 敵キャラの更新
-	enemy_->Update();
-	//自キャラの更新
+
+	// 自キャラの更新
 	player_->Update();
-	debugCamera_->Update();
-	
+	enemy_->Update();
+
+	ImGui::Begin("Debug1");
+
+	// float3入力ボックス
+
+	// ImGui::InputFloat3("InputFloat3", inputFloat3);
+
+	// float3スライダー
+	ImGui::SliderFloat3("SliderFloat3", inputFloat3, 0.0f, 1.0f);
+
+	ImGui::ShowDemoWindow();
+
+	ImGui::End();
+
+	// debugCamera_->Update();
 
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_SPACE)) {
+
+	if (input_->TriggerKey(DIK_K) == isDebugCameraActive_ == false) {
 		isDebugCameraActive_ = true;
+
+		// debugCamera->Update();
+	} else if (input_->TriggerKey(DIK_K) == isDebugCameraActive_ == true) {
+		isDebugCameraActive_ = false;
 	}
-#endif 
-	//カメラ
+
+#endif // DEBUG
+
+	// Cameraの処理
 	if (isDebugCameraActive_) {
+
 		debugCamera_->Update();
+
 		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
-		//ビュープロジェクション行列の転送
+
+		// ビュープロジェクション行列の転送
 		viewProjection_.TransferMatrix();
+
 	} else {
-	//ビュープロジェクション行列の更新と転送
+		// ビュープロジェクション行列の更新と転送
 		viewProjection_.UpdateMatrix();
 	}
 }
@@ -102,13 +137,11 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	// 敵キャラの描画
-	enemy_->Draw(viewProjection_);
+	// 自キャラの描画
 
-	//自キャラの描画
 	player_->Draw(viewProjection_);
 
-	
+	enemy_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
