@@ -19,7 +19,7 @@ Vector3 Enemy::GetWorldPosition() {
 	    worldTransform_.matWorld_.m[3][1],
 	    worldTransform_.matWorld_.m[3][2],
 	};
-	
+	 
 	return worldPos;
 }
 
