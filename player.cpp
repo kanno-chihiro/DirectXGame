@@ -25,6 +25,11 @@ Vector3 Player::GetWorldPosition(){
 	return worldPos;
 }
 
+void Player::OnCollision() 
+{
+
+}
+
 //
 // 初期化
 void Player::Initialize(Model* model, uint32_t textureHandle) {
@@ -118,11 +123,11 @@ void Player::Update() {
 	}
 
 	// 自機の旋回
-	if (input_->PushKey(DIK_D)) {
+	if (input_->PushKey(DIK_A)) {
 		worldTransform_.rotation_.y -= kRotSpeed;
 	}
 
-	if (input_->PushKey(DIK_A)) {
+	if (input_->PushKey(DIK_D)) {
 		worldTransform_.rotation_.y += kRotSpeed;
 	}
 

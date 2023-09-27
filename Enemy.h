@@ -30,7 +30,7 @@ public:
 	~Enemy();
 
 	
-	static const int kFireInterval = 60;
+	static const int kFireInterval = 50;
 
 	
 	void Phase_();
@@ -40,6 +40,10 @@ public:
 
 	
 	Vector3 GetWorldPosition();
+
+	void OnCollision();
+
+	const std::list<EnemyBullet * > & GetBullet() const { return Enemybullets_; }
 
 private:
 	

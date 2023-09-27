@@ -8,7 +8,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include <player.h>
+#include <Player.h>
 #include <Enemy.h>
 #include <DebugCamera.h>
 
@@ -35,6 +35,11 @@ public: // メンバ関数
 	void Initialize();
 
 	/// <summary>
+	///  衝突判定と応答
+	/// </summary>
+	void CheckAllCollisions();
+
+	/// <summary>
 	/// 毎フレーム処理
 	/// </summary>
 	void Update();
@@ -43,6 +48,8 @@ public: // メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
+
+	
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;

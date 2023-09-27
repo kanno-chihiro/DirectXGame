@@ -10,7 +10,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 	model_ = model;
 
 	// テクスチャ読み込み
-	ModeltextureHandle_ = TextureManager::Load("black.png");
+	ModeltextureHandle_ = TextureManager::Load("Block.png");
 
 	// ワールドトランスフォーム初期化
 	worldTransform_.Initialize();
@@ -18,6 +18,24 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 	worldTransform_.translation_ = position;
 
 	velocity_ = velocity;
+}
+
+Vector3 PlayerBullet::GetWorldPosition()
+{
+	//ワールド座標を入れる変数
+	Vector3 worldPos = {
+
+	//ワールド行列の平行移動成分を取得(ワールド座標)
+	worldPos.x = worldTransform_.matWorld_.m[3][0],
+	worldPos.y = worldTransform_.matWorld_.m[3][1],
+	worldPos.z = worldTransform_.matWorld_.m[3][2],
+};
+	return worldPos;
+}
+
+void PlayerBullet::OnCollision()
+{
+	isDead_ = true;
 }
 
 void PlayerBullet::Update() {
