@@ -8,6 +8,7 @@
 #include "PlayerBullet.h"
 #include "TextureManager.h"
 #include <cassert>
+#include "skydome.h"
 
 GameScene::GameScene() {}
 
@@ -16,6 +17,7 @@ GameScene::~GameScene() {
 	delete player_;
 	delete debugCamera_;
 	delete enemy_;
+	delete skydomeModel_;
 }
 
 void GameScene::Initialize() {
@@ -29,15 +31,17 @@ void GameScene::Initialize() {
 
 	EnemytextureHandle_ = TextureManager::Load("dorumage.jpg");
 
+	skydomeModel_ = Model::CreateFromOBJ("skydome", true);
+
+
+	// ビュープロジェクションの初期化
+	viewProjection_.farZ = 1000.0f;
+
+	model_ = Model::Create();
+
 	worldTransform_.Initialize();
 
 	viewProjection_.Initialize();
-
-	//
-	// プレイヤー
-	//
-
-	model_ = Model::Create();
 
 	// 自キャラの生成
 	player_ = new Player();
@@ -53,6 +57,11 @@ void GameScene::Initialize() {
 	// 敵キャラに自キャラのアドレスを渡す
 	enemy_->SetPlayer(player_);
 
+	//背景
+	skydome_ = new skydome();
+	skydome_->Initialize(skydomeModel_);
+
+	
 	// デバックカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 
@@ -66,6 +75,7 @@ void GameScene::Update() {
 	// 自キャラの更新
 	player_->Update();
 	enemy_->Update();
+	skydome_->Update();
 
 	ImGui::Begin("Debug1");
 
@@ -146,6 +156,8 @@ void GameScene::Draw() {
 	player_->Draw(viewProjection_);
 
 	enemy_->Draw(viewProjection_);
+
+	skydome_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

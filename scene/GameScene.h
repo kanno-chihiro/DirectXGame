@@ -11,6 +11,8 @@
 #include <Player.h>
 #include <Enemy.h>
 #include <DebugCamera.h>
+#include "skydome.h"
+
 
 /// <summary>
 /// ゲームシーン
@@ -84,8 +86,8 @@ private: // メンバ変数
 	// tekiテクスチャハンドル
 	uint32_t EnemytextureHandle_ = 0;
 
-	
-	
+	skydome* skydome_ = nullptr;
+	Model* skydomeModel_ = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用
