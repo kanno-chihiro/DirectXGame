@@ -1,4 +1,5 @@
 ﻿#include"MatrixTrans.h"
+#include <cassert>
 
 
 
@@ -374,6 +375,53 @@ Matrix4x4 Inverse(const Matrix4x4& m) {
 
 	return result;
 }
+
+Matrix4x4 MakeViewportMatrix(
+    float left, float top, float width, float height, float mindepth, float maxDepth) {
+	Matrix4x4 result;
+
+	result.m[0][0] = width / 2;
+	result.m[0][1] = 0.0f;
+	result.m[0][2] = 0.0f;
+	result.m[0][3] = 0.0f;
+
+	result.m[1][0] = 0.0f;
+	result.m[1][1] = -height / 2;
+	result.m[1][2] = 0.0f;
+	result.m[1][3] = 0.0f;
+
+	result.m[2][0] = 0.0f;
+	result.m[2][1] = 0.0f;
+	result.m[2][2] = maxDepth - mindepth;
+	result.m[2][3] = 0.0f;
+
+	result.m[3][0] = left + width / 2;
+	result.m[3][1] = top + height / 2;
+	result.m[3][2] = mindepth;
+	result.m[3][3] = 1.0f;
+
+	return result;
+};
+
+Vector3 Transform(const Vector3 vecter, const Matrix4x4 matrix) {
+	Vector3 result;
+	result.x = vecter.x * matrix.m[0][0] + vecter.y * matrix.m[1][0] + vecter.z * matrix.m[2][0] +
+	           matrix.m[3][0];
+	result.y = vecter.x * matrix.m[0][1] + vecter.y * matrix.m[1][1] + vecter.z * matrix.m[2][1] +
+	           matrix.m[3][1];
+	result.z = vecter.x * matrix.m[0][2] + vecter.y * matrix.m[1][2] + vecter.z * matrix.m[2][2] +
+	           matrix.m[3][2];
+
+	float w = vecter.x * matrix.m[0][3] + vecter.y * matrix.m[1][3] + vecter.z * matrix.m[2][3] +
+	          1.0f * matrix.m[3][3];
+
+	assert(w != 0.0f);
+	result.x /= w;
+	result.y /= w;
+	result.z /= w;
+	return result;
+};
+
 Vector3 Multiply2(const Vector3& v1, const Vector3& v2) 
 {
 
