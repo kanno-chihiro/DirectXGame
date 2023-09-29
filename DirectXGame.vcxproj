@@ -116,6 +116,7 @@
     <ClCompile Include="Matrix\MatrixTransform.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="PlayerBullet.cpp" />
+    <ClCompile Include="RailCamera.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="skydome.cpp" />
     <ClCompile Include="Vector\VectorTransform.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="Matrix\MatrixTransform.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="PlayerBullet.h" />
+    <ClInclude Include="RailCamera.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="skydome.h" />
     <ClInclude Include="Vector\VectorTransform.h" />

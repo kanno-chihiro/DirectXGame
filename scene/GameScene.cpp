@@ -9,6 +9,7 @@
 #include "TextureManager.h"
 #include <cassert>
 #include "skydome.h"
+#include "RailCamera.h"
 
 GameScene::GameScene() {}
 
@@ -47,7 +48,8 @@ void GameScene::Initialize() {
 	player_ = new Player();
 
 	// 自キャラの初期化
-	player_->Initialize(model_, textureHandle_);
+	Vector3 playerPosition(0, 0, 15.0f);
+	player_->Initialize(model_,textureHandle_,playerPosition);
 
 	// 敵キャラの初期化
 	enemy_ = new Enemy();
@@ -61,7 +63,17 @@ void GameScene::Initialize() {
 	skydome_ = new skydome();
 	skydome_->Initialize(skydomeModel_);
 
-	
+
+	//レールカメラ
+	railCamera_ = new RailCamera();
+	Vector3 radian = {0.0f, 0.0f, 0.0f};
+	railCamera_->Initialize(player_->GetWorldPosition(), radian);
+
+
+	// 自キャラとレールカメラの親子関係を結ぶ
+	player_->SetPrent(&railCamera_->GetWorldTransform());
+
+
 	// デバックカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 
@@ -76,6 +88,8 @@ void GameScene::Update() {
 	player_->Update();
 	enemy_->Update();
 	skydome_->Update();
+
+	railCamera_->Update();
 
 	ImGui::Begin("Debug1");
 

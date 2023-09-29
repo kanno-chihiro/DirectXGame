@@ -12,6 +12,7 @@
 #include <Enemy.h>
 #include <DebugCamera.h>
 #include "skydome.h"
+#include "RailCamera.h"
 
 
 /// <summary>
@@ -88,6 +89,7 @@ private: // メンバ変数
 
 	skydome* skydome_ = nullptr;
 	Model* skydomeModel_ = nullptr;
+	RailCamera* railCamera_ = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用

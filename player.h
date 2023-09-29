@@ -8,7 +8,7 @@
 class Player {
 public:
 	// 初期化
-	void Initialize(Model* model, uint32_t textureHandle);
+	void Initialize(Model* model, uint32_t textureHandle,Vector3 Startpos);
 
 	// 更新処理
 	void Update();
@@ -21,15 +21,18 @@ public:
 
 	// デストラクタ
 	~Player();
-
+	
 	// ワールド座標を取得
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() { return worldTransform_.translation_; }
 
 	// 衝突を検出したら呼び出されるコールバック関数
 	void OnCollision();
 
 	//弾リスト
 	const std::list<PlayerBullet * > & GetBullet() const { return bullets_; }
+
+	//親となるワールドトランスフォームをセット
+	void SetPrent(const WorldTransform* parent);
 
 private:
 	// ワールド変換データ

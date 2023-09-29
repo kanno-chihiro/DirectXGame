@@ -38,7 +38,7 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle) {
 
 	worldTransform_.Initialize();
 
-	worldTransform_.translation_.z = 80.0f;
+	worldTransform_.translation_.z = 35.0f;
 	worldTransform_.translation_.x = 30.0f;
 
 	phase_ = Phase::Approach;
@@ -98,7 +98,7 @@ void Enemy::Update() {
 
 	Vector3 move = {0.0, 0.0, 0.0f};
 
-	const float kCharacterSpeed = 0.2f;
+	const float kCharacterSpeed = 0.05f;
 
 	switch (phase_) {
 	case Phase::Approach: // 接近フェーズ

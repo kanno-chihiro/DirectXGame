@@ -6,33 +6,31 @@
 // bullet_の解放
 Player::~Player() {
 
-	for (PlayerBullet* bullet : bullets_) {
-		delete bullet;
+	for (PlayerBullet* bullet : bullets_) 
+	{
+		delete bullet_;
 	}
 }
+//
+//Vector3 Player::GetWorldPosition(){
+//
+//    // ワールド座標を入れる変数
+//	Vector3 worldPos = { 
+//	worldPos.x = worldTransform_.matWorld_.m[3][0],
+//	worldPos.y = worldTransform_.matWorld_.m[3][1],
+//	worldPos.z = worldTransform_.matWorld_.m[3][2],
+//};
+//
+//	// ワールド行列の平行移動成分を取得(ワールド座標)
+//	
+//	return worldPos;
+//}
 
-Vector3 Player::GetWorldPosition(){
 
-    // ワールド座標を入れる変数
-	Vector3 worldPos = { 
-	worldPos.x = worldTransform_.matWorld_.m[3][0],
-	worldPos.y = worldTransform_.matWorld_.m[3][1],
-	worldPos.z = worldTransform_.matWorld_.m[3][2],
-};
-
-	// ワールド行列の平行移動成分を取得(ワールド座標)
-	
-	return worldPos;
-}
-
-void Player::OnCollision() 
-{
-
-}
 
 //
 // 初期化
-void Player::Initialize(Model* model, uint32_t textureHandle) {
+void Player::Initialize(Model* model, uint32_t textureHandle,Vector3 StartPos) {
 
 	// NULLポインタチェック
 	assert(model);
@@ -52,7 +50,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	worldTransform_.rotation_ = {0.0f, 0.0f, 0.0f};
 
 	// 平行移動行列
-	worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
+	worldTransform_.translation_ = StartPos; //{0.0f, 0.0f, 0.0f};
+	StartPos.z = 5.0f;
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
@@ -85,6 +84,16 @@ void Player::Attack(Vector3& position) {
 
 		bullets_.push_back(newBullet);
 	}
+}
+
+void Player::OnCollision() 
+{
+
+}
+
+void Player::SetPrent(const WorldTransform* parent)
+{ 
+	worldTransform_.parent_ = parent; 
 }
 
 //
@@ -142,8 +151,13 @@ void Player::Update() {
 	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 
+	Vector3 position ={
+	position.x = worldTransform_.matWorld_.m[3][0],
+	position.y = worldTransform_.matWorld_.m[3][1],
+	position.z = worldTransform_.matWorld_.m[3][2],
+};
 	// キャラクター攻撃処理
-	Attack(worldTransform_.translation_);
+	Attack(position);
 
 	// 弾更新
 	/*if (bullet_)
@@ -158,8 +172,7 @@ void Player::Update() {
 	// 足し算
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 
-	worldTransform_.matWorld_ = MakeAffineMatrix(
-	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+	worldTransform_.UpdateMatrix();
 
 	worldTransform_.TransferMatrix();
 
