@@ -10,6 +10,7 @@
 #include <cassert>
 #include "skydome.h"
 #include "RailCamera.h"
+#include <fstream>
 
 GameScene::GameScene() {}
 
@@ -19,6 +20,10 @@ GameScene::~GameScene() {
 	delete debugCamera_;
 	delete enemy_;
 	delete skydomeModel_;
+	for (EnemyBullet* enemyBullet : enemyBullets_)
+	{
+		delete enemyBullet;
+	}
 }
 
 void GameScene::Initialize() {
@@ -27,10 +32,10 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	textureHandle_ = TextureManager::Load("DM1.jpg");
+	textureHandle_ = TextureManager::Load("Player.png");
 	// textureHandle_ = TextureManager::Load("debugfont.png");
 
-	EnemytextureHandle_ = TextureManager::Load("dorumage.jpg");
+	EnemytextureHandle_ = TextureManager::Load("Enemy.png");
 
 	skydomeModel_ = Model::CreateFromOBJ("skydome", true);
 
@@ -48,13 +53,16 @@ void GameScene::Initialize() {
 	player_ = new Player();
 
 	// 自キャラの初期化
-	Vector3 playerPosition(0, 0, 15.0f);
+	Vector3 playerPosition(0, -3, -40.0f);
 	player_->Initialize(model_,textureHandle_,playerPosition);
 
 	// 敵キャラの初期化
 	enemy_ = new Enemy();
+	Vector3 enemyPosition(0, 0, 0);
+	enemy_->Initialize(model_, EnemytextureHandle_,enemyPosition);
 
-	enemy_->Initialize(model_, EnemytextureHandle_);
+	//敵キャラにゲームシーンを渡す
+	enemy_->SetGameScene(this);
 
 	// 敵キャラに自キャラのアドレスを渡す
 	enemy_->SetPlayer(player_);
@@ -72,7 +80,7 @@ void GameScene::Initialize() {
 
 	// 自キャラとレールカメラの親子関係を結ぶ
 	player_->SetPrent(&railCamera_->GetWorldTransform());
-
+	LoadEnemyPopData();
 
 	// デバックカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
@@ -90,8 +98,17 @@ void GameScene::Update() {
 	skydome_->Update();
 
 	railCamera_->Update();
+	debugCamera_->Update();
 
 	ImGui::Begin("Debug1");
+	// 敵発生処理
+	// LoadEnemyPopData();
+
+	UpdateEnemyPopCommands();
+
+	// 敵の行進処理
+	EnemyObjUpdate();
+
 
 	// float3入力ボックス
 
@@ -172,6 +189,8 @@ void GameScene::Draw() {
 	enemy_->Draw(viewProjection_);
 
 	skydome_->Draw(viewProjection_);
+
+	EnemyObjDraw();
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -298,4 +317,143 @@ void GameScene::CheckAllCollisions() {
 		}
 	}
 #pragma endregion
+}
+
+void GameScene::AddEnemyBullet(EnemyBullet* enemyBullet)
+{
+	enemyBullets_.push_back(enemyBullet); 
+}
+
+void GameScene::LoadEnemyPopData() {
+	// ファイルを開く
+	std::ifstream file;
+	file.open("Resources/enemyPop.csv");
+
+	assert(file.is_open());
+
+	// ファイルの内容を文字ストリームにコピー
+	enemyPopCommands << file.rdbuf();
+
+	// ファイルを閉じる
+	file.close();
+}
+
+void GameScene::UpdateEnemyPopCommands() {
+	// 待機処理
+	if (waitFlag_) {
+		waitTime_--;
+
+		if (waitTime_ <= 0) {
+			// 待機完了
+			waitFlag_ = false;
+		}
+		return;
+	}
+
+	// 1行分の文字列を入れる変数
+	std::string line;
+
+	// コマンド実行ループ
+	while (getline(enemyPopCommands, line)) {
+		// 1行分の文字列をストリームに変換して解析しやすくする
+		std::istringstream line_stream(line);
+
+		std::string word;
+		// , 区切りで先頭の文字を取得
+		getline(line_stream, word, ',');
+
+		// "//"から始まる行はコメント
+		if (word.find("//") == 0) {
+			// コメントの行を飛ばす
+			continue;
+		}
+
+		// POPコマンド
+
+		if (word.find("POP") == 0) {
+			// x座標
+			getline(line_stream, word, ',');
+			float x = (float)std::atof(word.c_str());
+
+			// y座標
+			getline(line_stream, word, ',');
+			float y = (float)std::atof(word.c_str());
+
+			// z座標
+			getline(line_stream, word, ',');
+			float z = (float)std::atof(word.c_str());
+
+			Vector3 pos = {x, y, z};
+
+			// 敵を発生させる
+			EnemySpawn(pos);
+		} else if (word.find("WAIT") == 0) {
+			getline(line_stream, word, ',');
+
+			// 待ち時間
+			int32_t waitTime = atoi(word.c_str());
+
+			// 待機開始
+			waitFlag_ = true;
+			waitTime_ = waitTime;
+
+			// コマンドループを抜ける
+			break;
+		}
+	}
+}
+
+// 初期化
+void GameScene::EnemySpawn(Vector3& position) {
+	Enemy* enemy = new Enemy;
+
+	enemy->Initialize(model_, EnemytextureHandle_, position);
+
+	// Enemeyにplayerのアドレスを渡す
+	enemy->SetPlayer(player_);
+
+	enemy->SetGameScene(this);
+
+	enemies_.push_back(enemy);
+}
+
+// アップデート
+void GameScene::EnemyObjUpdate() {
+	for (Enemy* enemy : enemies_) {
+		enemy->Update();
+	}
+
+	enemies_.remove_if([](Enemy* enemy_) {
+		if (enemy_->IsDead()) {
+			delete enemy_;
+			return true;
+		}
+
+		return false;
+	});
+
+	for (EnemyBullet* Enemybullet : enemyBullets_) {
+		Enemybullet->Update();
+	}
+
+	enemyBullets_.remove_if([](EnemyBullet* Enemybullet) {
+		if (Enemybullet->IsDead()) {
+			delete Enemybullet;
+			return true;
+		}
+		return false;
+	});
+}
+
+// 描画
+void GameScene::EnemyObjDraw() {
+
+	for (Enemy* enemy : enemies_) {
+		enemy->Draw(viewProjection_);
+	}
+
+	// 弾の描画
+	for (EnemyBullet* Enemybullet : enemyBullets_) {
+		Enemybullet->Draw(viewProjection_);
+	}
 }

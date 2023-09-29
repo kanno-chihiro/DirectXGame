@@ -9,13 +9,17 @@ enum class Phase {
 	Leave,
 };
 
-//
+//自機クラスの前方宣言
 class Player;
+
+// ゲームシーンクラスの前方宣言
+class GameScene;
+
 
 class Enemy {
 public:
 	
-	void Initialize(Model* model, uint32_t textureHandle);
+	void Initialize(Model* model, uint32_t textureHandle,Vector3 position);
 
 	
 	void Update();
@@ -42,6 +46,14 @@ public:
 	Vector3 GetWorldPosition();
 
 	void OnCollision();
+
+	
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
+
+	bool IsDead() const { return isDead_; }
+
+
+
 
 	const std::list<EnemyBullet * > & GetBullet() const { return Enemybullets_; }
 
@@ -70,4 +82,8 @@ private:
 
 	
 	Player* player_ = nullptr;
+
+	GameScene* gameScene_ = nullptr;
+
+	bool isDead_ = false;
 };
