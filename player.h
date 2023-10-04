@@ -38,6 +38,10 @@ public:
 
 	void DrawUI();
 
+	void UpdateReticle(ViewProjection& viewProjection);
+
+
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -69,4 +73,14 @@ private:
 	Vector2 ReticlePos = {640, 360};
 	Vector4 color = {1, 1, 1, 1};
 	Vector2 anchor = {0.5f, 0.5f};
+
+	// マウス
+	void GetmousePoint();
+	POINT mausePosition;
+
+	void GetReticlePoint();
+
+	
+
+	
 };

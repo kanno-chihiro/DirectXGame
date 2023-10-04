@@ -18,7 +18,7 @@ Player::~Player() {
 
 //
 // 初期化
-void Player::Initialize(Model* model, uint32_t textureHandle,Vector3 StartPos) {
+void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 Startpos) {
 
 	// NULLポインタチェック
 	assert(model);
@@ -38,8 +38,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle,Vector3 StartPos) {
 	worldTransform_.rotation_ = {0.0f, 0.0f, 0.0f};
 
 	// 平行移動行列
-	worldTransform_.translation_ = StartPos; //{0.0f, 0.0f, 0.0f};
-	StartPos.z = 5.0f;
+	worldTransform_.translation_ = Startpos; //{0.0f, 0.0f, 0.0f};
+	Startpos.z = 5.0f;
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
@@ -73,6 +73,8 @@ void Player::Update(ViewProjection& viewProjection) {
 	// キャラクターの移動速さ
 	const float kCharacterSpeed = 0.2f;
 	const float kRotSpeed = 0.02f;
+
+	
 
 	// 押した方向で移動ベクトルを変更(左右)
 	if (input_->PushKey(DIK_LEFT)) {
@@ -108,19 +110,19 @@ void Player::Update(ViewProjection& viewProjection) {
 	worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMoveLimitX);
 	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
-
-	Vector3 position = {
-	    position.x = worldTransform_.matWorld_.m[3][0],
-	    position.y = worldTransform_.matWorld_.m[3][1],
-	    position.z = worldTransform_.matWorld_.m[3][2],
-	};
-
+	
 	// 足し算
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 
 	worldTransform_.UpdateMatrix();
 
 	worldTransform_.TransferMatrix();
+
+	Vector3 position = {
+	    position.x = worldTransform_.matWorld_.m[3][0],
+	    position.y = worldTransform_.matWorld_.m[3][1],
+	    position.z = worldTransform_.matWorld_.m[3][2],
+	};
 
 	// キャラクター攻撃処理
 	Attack(position);
@@ -179,19 +181,15 @@ void Player::Update(ViewProjection& viewProjection) {
 
 	// 3Dレティクルのワールド座標から2Dレティクルのスクリーン座標を計算
 	Vector3 positionReticle = {
-	    worldTransform3DReticle_.matWorld_.m[3][0], worldTransform3DReticle_.matWorld_.m[3][1],
-	    worldTransform3DReticle_.matWorld_.m[3][2]};
+	    worldTransform3DReticle_.matWorld_.m[3][0],
+		worldTransform3DReticle_.matWorld_.m[3][1],
+	    worldTransform3DReticle_.matWorld_.m[3][2]
+	};
 
 	// ビューポート行列
 	Matrix4x4 matViewport =
 	    MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
 
-	// matViewport.m[0][0] = +WinApp::kWindowWidth / 2.0f;
-	// matViewport.m[1][1] = -WinApp::kWindowHeight / 2.0f;
-	// matViewport.m[3][0] = +WinApp::kWindowWidth / 2.0f;
-	// matViewport.m[3][1] = +WinApp::kWindowHeight / 2.0f;
-	// matViewport.m[2][2] = 1;
-	// matViewport.m[3][3] = 1;
 
 	// ビュー行列とプロジェクション行列、ビューポート行列を合成する
 	Matrix4x4 matViewProjectionViewport =
@@ -202,6 +200,12 @@ void Player::Update(ViewProjection& viewProjection) {
 
 	// スプライトのレティクルに座標を設定
 	sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
+
+	// マウスでカーソルを動かす
+	GetmousePoint();
+
+	
+	UpdateReticle(viewProjection);
 }
 
 //
@@ -239,10 +243,22 @@ void Player::Attack(Vector3& position) {
 		// 速度ベクトルを自機の向きに合わせて回転させる
 		velocity = TransformNormal(velocity, worldTransform_.matWorld_);
 
+		
+
+		// 自機から照準オブジェクトへのベクトル
+		Vector3 pos;
+		pos.x = worldTransform3DReticle_.translation_.x - worldTransform_.translation_.x;
+		pos.y = worldTransform3DReticle_.translation_.y - worldTransform_.translation_.y;
+		pos.z = worldTransform3DReticle_.translation_.z - worldTransform_.translation_.z;
+
+		velocity = {pos.x, pos.y, pos.z};
+
+		velocity = Normalize(velocity);
+
+
 		// 弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
 		newBullet->Initialize(model_, position, velocity);
-
 		// 弾を登録する
 		// bullet_ = newBullet;
 
@@ -250,13 +266,14 @@ void Player::Attack(Vector3& position) {
 	}
 }
 
+
+
 void Player::OnCollision() 
 {
 
 }
 
-void Player::SetPrent(const WorldTransform* parent)
-{ 
+void Player::SetPrent(const WorldTransform* parent) { 
 	worldTransform_.parent_ = parent; 
 }
 
@@ -265,6 +282,71 @@ void Player::DrawUI()
 {
 	sprite2DReticle_->Draw(); 
 }
+
+void Player::UpdateReticle(ViewProjection& viewProjection) {
+	Matrix4x4 matViewport =
+	    MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+
+	Matrix4x4 matVPV =
+	    Multiply(viewProjection.matView, Multiply(viewProjection.matProjection, matViewport));
+
+	Matrix4x4 matInverseVPV = Inverse(matVPV);
+
+	// スクリーン座標
+	Vector3 posNear = Vector3(
+	    (float)sprite2DReticle_->GetPosition().x, (float)sprite2DReticle_->GetPosition().y, 0);
+
+	Vector3 posFar = Vector3(
+	    (float)sprite2DReticle_->GetPosition().x, (float)sprite2DReticle_->GetPosition().y, 1);
+
+	// スクリーン座標系からワールド座標系へ
+	posNear = Transform(posNear, matInverseVPV);
+	posFar = Transform(posFar, matInverseVPV);
+
+	// マウスレイの方向
+	Vector3 mauseDirection = Subtract(posFar, posNear);
+	mauseDirection = Normalize(mauseDirection);
+
+	// カメラから照準オブジェクトへの距離
+	const float kDistanceTestObject = 50.0f;
+
+	worldTransform3DReticle_.translation_.x = posNear.x + mauseDirection.x * kDistanceTestObject;
+	worldTransform3DReticle_.translation_.y = posNear.y + mauseDirection.y * kDistanceTestObject;
+	worldTransform3DReticle_.translation_.z = posNear.z + mauseDirection.z * kDistanceTestObject;
+
+	worldTransform3DReticle_.UpdateMatrix();
+
+	// デバッグ表示
+	ImGui::Begin("player");
+	ImGui::Text(
+	    "2DReticle:(%f,%f)", sprite2DReticle_->GetPosition().x, sprite2DReticle_->GetPosition().y);
+	ImGui::Text("Near:(%+.2f,%+.2f,%+.2f)", posNear.x, posNear.y, posNear.z);
+	ImGui::Text("Far:(%+.2f,%+.2f,%+.2f)", posFar.x, posFar.y, posFar.z);
+	ImGui::Text(
+	    "3DReticle:(%+.2f,%+.2f,%+.2f)", worldTransform3DReticle_.translation_.x,
+	    worldTransform3DReticle_.translation_.y, worldTransform3DReticle_.translation_.z);
+	ImGui::End();
+}
+
+
+
+//  マウス関数
+void Player::GetmousePoint() {
+	// マウス座標(スクリーン座標)を取得する
+	GetCursorPos(&mausePosition);
+
+	// クライアントエリア座標に変換する
+	HWND hwnd = WinApp::GetInstance()->GetHwnd();
+	ScreenToClient(hwnd, &mausePosition);
+
+	ReticlePos.x = float(mausePosition.x);
+	ReticlePos.y = float(mausePosition.y);
+
+	sprite2DReticle_->SetPosition(ReticlePos);
+}
+
+void Player::GetReticlePoint() {}
+
 
 
 
