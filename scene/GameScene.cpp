@@ -6,9 +6,9 @@
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
-	delete model_;
-	// 自キャラの解放
-	delete player_;
+	//delete model_;
+	//// 自キャラの解放
+	//delete player_;
 }
 
 void GameScene::Initialize() {
@@ -18,7 +18,7 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 
 	//ファイル名を指定してテクスチャを読み込む
-	textureHandle_ = TextureManager::Load("DM1.jpg");
+	textureHandle_ = TextureManager::Load("Player.png");
 	
 	//3Dモデルの生成
 	model_ = Model::Create();
@@ -27,9 +27,9 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 
 	//自キャラの生成
-	player_ = new Player();
+	player_ = std::make_unique<Player>();
 	//自キャラの初期化
-	player_->Initialize( model_,  textureHandle_);
+	player_->Initialize(model_.get(), textureHandle_);
 }
 
 void GameScene::Update() {

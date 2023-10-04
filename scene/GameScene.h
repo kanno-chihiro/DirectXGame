@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "Audio.h"
 #include "DirectXCommon.h"
 #include "Input.h"
@@ -56,7 +57,7 @@ private: // メンバ変数
 	ViewProjection viewProjection_;
 
 	//自キャラ
-	Player* player_ = nullptr;
+	std::unique_ptr<Player> player_;
 
 	/// <summary>
 	/// ゲームシーン用
