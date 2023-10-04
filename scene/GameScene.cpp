@@ -21,7 +21,7 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("Player.png");
 	
 	//3Dモデルの生成
-	model_ = Model::Create();
+	model_.reset(Model::Create());
 
 	//ビュープロジェクション
 	viewProjection_.Initialize();
