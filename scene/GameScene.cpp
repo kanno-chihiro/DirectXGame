@@ -11,6 +11,7 @@
 #include "skydome.h"
 #include "RailCamera.h"
 #include <fstream>
+#include "TitleScene.h"
 
 GameScene::GameScene() {}
 
