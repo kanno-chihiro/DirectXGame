@@ -8,4 +8,9 @@ void TitleScene::Initialize() {}
 
 void TitleScene::Update() {}
 
-void TitleScene::Draw() {}
+void TitleScene::Draw()
+{
+	// コマンドリストの取得
+	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
+
+}

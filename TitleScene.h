@@ -21,7 +21,7 @@ public:
 
 	void Draw();
 
-	private:
+private:
 
 		DirectXCommon* dxCommon_ = nullptr;
 	    Input* input_ = nullptr;
