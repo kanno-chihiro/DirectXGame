@@ -1,7 +1,14 @@
-#include "GameScene.h"
+﻿#include "GameScene.h"
+#include "AxisIndicator.h"
+#include "ImGuiManager.h"
+#include "MatrixTrans.h"
+#include "Player.h"
 #include "TextureManager.h"
 #include <cassert>
-
+#include "skydome.h"
+#include "Ground.h"
+#include <fstream>
+#include "AxisIndicator.h"
 
 GameScene::GameScene() {}
 
@@ -9,6 +16,9 @@ GameScene::~GameScene() {
 	//delete model_;
 	//// 自キャラの解放
 	//delete player_;
+	//delete skydomeModel_;
+	//delete Groundmodel_;
+	delete debugCamera_;
 }
 
 void GameScene::Initialize() {
@@ -16,25 +26,72 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+	debugCamera_ = new DebugCamera(-18, 18);
 
 	//ファイル名を指定してテクスチャを読み込む
-	textureHandle_ = TextureManager::Load("Player.png");
+	model_.reset (Model::CreateFromOBJ("Player",true));
+
+	model__.reset (Model::CreateFromOBJ("skydome", true));
+
+	GroundModel_.reset(Model::CreateFromOBJ("Ground", true));
+
 	
 	//3Dモデルの生成
-	model_.reset(Model::Create());
+	//model_.reset(Model::Create());
+	
 
-	//ビュープロジェクション
+	worldTransform_.Initialize();
+
+	viewProjection_.translation_ = {0, +3, -50};
 	viewProjection_.Initialize();
 
 	//自キャラの生成
 	player_ = std::make_unique<Player>();
 	//自キャラの初期化
-	player_->Initialize(model_.get(), textureHandle_);
+	player_->Initialize(model_.get());
+
+	// 背景
+	skydome_ = std::make_unique<skydome>();
+
+	skydome_->Initialize(model__.get());
+
+	//地面
+	Ground_ = std::make_unique<Ground>();
+
+	Ground_->Initialize(GroundModel_.get());
+
+		// 軸方向表示の表示を有効にする
+	AxisIndicator::GetInstance()->SetVisible(true);
+	// 軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
+	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
+
 }
 
 void GameScene::Update() {
 //自キャラの更新
 	player_->Update();
+	skydome_->Update();
+	Ground_->Update();
+	debugCamera_->Update();
+
+	#ifdef _DEBUG
+	if (input_->TriggerKey(DIK_SPACE)) {
+		isDebugCameraActive_ = true;
+	}
+#endif 
+
+	// カメラ
+	if (isDebugCameraActive_) {
+		debugCamera_->Update();
+		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+		// ビュープロジェクション行列の転送
+		viewProjection_.TransferMatrix();
+	} else {
+		// ビュープロジェクション行列の更新と転送
+		viewProjection_.UpdateMatrix();
+	}
+
 }
 
 void GameScene::Draw() {
@@ -67,6 +124,9 @@ void GameScene::Draw() {
 	//自キャラの描画
 	player_->Draw(viewProjection_);
 
+	skydome_->Draw(viewProjection_);
+
+	Ground_->Draw(viewProjection_);
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion

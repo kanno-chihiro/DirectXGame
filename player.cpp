@@ -1,4 +1,4 @@
-#include<player.h>
+ï»¿#include<player.h>
 #include <cassert>
 #include "Audio.h"
 #include "DirectXCommon.h"
@@ -10,27 +10,30 @@
 #include "WorldTransform.h"
 
 
-void Player::Initialize(Model* model, uint32_t textureHandle)
+void Player::Initialize(Model* model)
 {
 
-	//NULLƒ|ƒCƒ“ƒ^ƒ`ƒFƒbƒN
+	//NULLãƒã‚¤ãƒ³ã‚¿ãƒã‚§ãƒƒã‚¯
 	assert(model);
 	model_ = model;
-	textureHandle_ = textureHandle;
 	worldTransform_.Initialize();
+
+	worldTransform_.scale_ = {40.0f, 40.0f, 40.0f};
+
+	worldTransform_.translation_.z = 8.0f;
 
 };
 
 
 void Player::Update() {
-	// s—ñ‚ð’è”ƒoƒbƒtƒ@‚É“]‘—
+	// è¡Œåˆ—ã‚’å®šæ•°ãƒãƒƒãƒ•ã‚¡ã«è»¢é€
 	worldTransform_.TransferMatrix();
 };
 
 
 void Player::Draw(ViewProjection &viewProjection) {
 
-	//3Dƒ‚ƒfƒ‹‚ð•`‰æ
-	model_->Draw(worldTransform_,viewProjection, textureHandle_);
+	//3Dãƒ¢ãƒ‡ãƒ«ã‚’æç”»
+	model_->Draw(worldTransform_,viewProjection);
 
 };
