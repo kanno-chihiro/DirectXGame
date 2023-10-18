@@ -29,7 +29,7 @@ void GameScene::Initialize() {
 	debugCamera_ = new DebugCamera(-18, 18);
 
 	//ファイル名を指定してテクスチャを読み込む
-	model_.reset (Model::CreateFromOBJ("Player",true));
+	model_.reset (Model::CreateFromOBJ("float",true));
 
 	model__.reset (Model::CreateFromOBJ("skydome", true));
 
