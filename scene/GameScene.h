@@ -9,7 +9,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <player.h>
-#include <Enemy.h>
+
 #include <DebugCamera.h>
 
 /// <summary>
@@ -69,7 +69,7 @@ private: // メンバ変数
 	//自キャラ
 	Player* player_ = nullptr;
 
-	Enemy* enemy_ = nullptr;
+	
 
 	/// <summary>
 	/// ゲームシーン用

@@ -9,7 +9,7 @@ GameScene::~GameScene() {
 	delete model_;
 	// 自キャラの解放
 	delete player_;
-	delete enemy_;
+	
 	delete debugCamera_;
 }
 
@@ -40,14 +40,14 @@ void GameScene::Initialize() {
 	//自キャラの初期化
 	player_->Initialize( model_,  textureHandle_);
 
-	enemy_ = new Enemy();
-	enemy_->Initialize(model_, textureHandle_);
+	
+	
 }
 
 void GameScene::Update() {
 //自キャラの更新
 	player_->Update();
-	enemy_->Update();
+	
 	debugCamera_->Update();
 
 #ifdef _DEBUG
@@ -97,7 +97,7 @@ void GameScene::Draw() {
 
 	//自キャラの描画
 	player_->Draw(viewProjection_);
-	enemy_->Draw(viewProjection_);
+	
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
