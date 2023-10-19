@@ -7,6 +7,7 @@
 #include "TextureManager.h"
 #include "WinApp.h"
 #include "TitleScene.h"
+#include <reset.h>
 
 enum SCENE { 
 	scene0, 
@@ -26,6 +27,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	PrimitiveDrawer* primitiveDrawer = nullptr;
 	GameScene* gameScene = nullptr;
 	TitleScene* titleScene = nullptr;
+	reset* resetScene = nullptr;
 
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
@@ -68,9 +70,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	int sceneNo = scene0;
 
+	
 	//タイトルシーンの初期化
 	titleScene = new TitleScene();
 	titleScene->Initialize();
+
+	//説明シーンの初期化
+	resetScene = new reset();
+	resetScene->Initialize();
 
 	// ゲームシーンの初期化
 	gameScene = new GameScene();
@@ -88,19 +95,41 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 入力関連の毎フレーム処理
 		input->Update();
 		
-		switch (sceneNo)
-		{ 
+		switch (sceneNo) {
 		case scene0:
-			if (keys[DIK_RETURN] && preKeys[DIK_RETURN] == 0) {
+			if (input->PushKey(DIK_SPACE)) {
 				sceneNo = scene1;
 			}
 			break;
 		case scene1:
+			if (input->PushKey(DIK_SPACE)) {
+				sceneNo = scene2;
+			}
+			break;
+		case scene2:
 
+
+
+			break;
+		case scene3:
+			if (input->PushKey(DIK_SPACE))
+			{
+				sceneNo = scene0;
+			}
+			break;
+		case scene4:
+			if (input->PushKey(DIK_SPACE))
+			{
+				sceneNo = scene0;
+			}
+			break;
 		}
 
-		//タイトルシーンの毎フレーム処理
+
+		// タイトルシーンの毎フレーム処理
 		titleScene->Update();
+		//説明シーンの毎フレーム処理
+		resetScene->Update();
 		// ゲームシーンの毎フレーム処理
 		gameScene->Update();
 
@@ -112,20 +141,38 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 
-
-
 		// 描画開始
 		dxCommon->PreDraw();
-		//タイトルシーンの描画
-		titleScene->Draw();
-		// ゲームシーンの描画
-		gameScene->Draw();
+
+		switch (sceneNo) {
+		case scene0:
+			// タイトルシーンの描画
+			titleScene->Draw();
+			break;
+		case scene1:
+			// タイトルシーンの描画
+			resetScene->Draw();
+			break;
+		case scene2:
+			// ゲームシーンの描画
+			gameScene->Draw();
+			break;
+		case scene3:
+			//ゲームクリアの描画
+			break;
+		case scene4:
+			//ゲームオーバーの描画
+			break;
+		}
+
+
 		// 軸表示の描画
 		axisIndicator->Draw();
 		// プリミティブ描画のリセット
 		primitiveDrawer->Reset();
 		// ImGui描画
 		imguiManager->Draw();
+
 		// 描画終了
 		dxCommon->PostDraw();
 	}

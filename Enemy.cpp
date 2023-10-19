@@ -1,5 +1,5 @@
 ﻿#include "Enemy.h"
-// #include "EnemyBullet.h"
+#include "EnemyBullet.h"
 #include "MatrixTrans.h"
 #include "Player.h"
 #include <cassert>

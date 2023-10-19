@@ -1,23 +1,23 @@
-﻿#include "TitleScene.h"
-#include "TextureManager.h"
+﻿#include "reset.h"
+#include "TitleScene.h"
 #include <cassert>
 
-TitleScene::TitleScene() {}
+reset::reset() {}
 
-TitleScene::~TitleScene() {}
+reset::~reset() {}
 
-void TitleScene::Initialize() {
-
+void reset::Initialize() {
 
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 }
 
-void TitleScene::Update() {}
+void reset::Update() {}
 
 
-void TitleScene::Draw(){
+
+void reset::Draw() {
 
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
