@@ -1,33 +1,33 @@
-﻿#include "TitleScene.h"
+﻿#include "GameClear.h"
+#include "GameScene.h"
 #include "AxisIndicator.h"
 #include "Enemy.h"
 #include "EnemyBullet.h"
-#include "GameScene.h"
 #include "ImGuiManager.h"
 #include "MatrixTrans.h"
 #include "Player.h"
 #include "PlayerBullet.h"
-#include "RailCamera.h"
 #include "TextureManager.h"
-#include "skydome.h"
 #include <cassert>
+#include "skydome.h"
+#include "RailCamera.h"
 #include <fstream>
-#include "GameClear.h"
 
-TitleScene::TitleScene() {}
 
-TitleScene::~TitleScene() { delete sprite_; }
+GameClear::GameClear() {}
 
-void TitleScene::Initialize() {
+GameClear::~GameClear() { delete sprite_; }
+
+void GameClear::Initialize() {
 
 	// シーンのクラス化をするときはCPPに下の三つが必要
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	titletexture_ = TextureManager::Load("title.png");
+	gamecleartexture_ = TextureManager::Load("gameclear.png");
 
-	sprite_ = Sprite::Create(titletexture_, {0, 0});
+	sprite_ = Sprite::Create(gamecleartexture_, {0, 0});
 	// ビュープロジェクションの初期化
 	viewProjection_.farZ = 1000.0f;
 
@@ -36,18 +36,13 @@ void TitleScene::Initialize() {
 	viewProjection_.Initialize();
 }
 
-// void TitleScene::Scene() {}
-
-void TitleScene::Update() {
-
+void GameClear::Update() {
 	if (input_->TriggerKey(DIK_SPACE)) {
-		TitleSceneEnd_ = true;
+		ClearSceneEnd_ = true;
 	}
-	
 }
 
-void TitleScene::Draw() {
-
+void GameClear::Draw() {
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
@@ -89,6 +84,5 @@ void TitleScene::Draw() {
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
-
 #pragma endregion
 }

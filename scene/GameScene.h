@@ -14,6 +14,8 @@
 #include "skydome.h"
 #include "RailCamera.h"
 #include <sstream>
+#include "Scene.h"
+#include"reset.h"
 
 
 /// <summary>
@@ -58,6 +60,17 @@ public: // メンバ関数
 	void LoadEnemyPopData();
 
 	void UpdateEnemyPopCommands();
+
+	bool GameSceneEnd_ = false;
+
+	bool IsSceneEnd() { return GameSceneEnd_; }
+	SCENE NextScene() { return SCENE::Clear; }
+
+	bool ResetSceneEnd_ = false;
+
+	void Start() { GameSceneEnd_ = false; }
+
+	
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -111,6 +124,9 @@ private: // メンバ変数
 
 	bool waitFlag_ = false;
 	int32_t waitTime_ = 0;
+
+	
+
 
 	/// <summary>
 	/// ゲームシーン用

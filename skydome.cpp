@@ -1,11 +1,11 @@
-#include "skydome.h"
+ï»¿#include "skydome.h"
 #include <assert.h>
 
 void skydome::Initialize(Model* model) 
 {
 	assert(model);
 
-	//ˆø”‚Æ‚µ‚Äó‚¯æ‚Á‚½ƒf[ƒ^‚ğƒƒ“ƒo•Ï”‚É‹L˜^‚·‚é
+	//å¼•æ•°ã¨ã—ã¦å—ã‘å–ã£ãŸãƒ‡ãƒ¼ã‚¿ã‚’ãƒ¡ãƒ³ãƒå¤‰æ•°ã«è¨˜éŒ²ã™ã‚‹
 	model_ = model;
 
 	worldTransform_.Initialize();

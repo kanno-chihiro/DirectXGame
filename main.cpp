@@ -1,20 +1,14 @@
 #include "Audio.h"
 #include "AxisIndicator.h"
 #include "DirectXCommon.h"
+#include "GameClear.h"
 #include "GameScene.h"
 #include "ImGuiManager.h"
 #include "PrimitiveDrawer.h"
 #include "TextureManager.h"
-#include "WinApp.h"
 #include "TitleScene.h"
-#include <reset.h>
-
-enum SCENE { 
-	scene0, 
-	scene1, 
-	scene2, 
-	scene3, 
-	scene4 };
+#include "WinApp.h"
+#include "reset.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -28,6 +22,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	GameScene* gameScene = nullptr;
 	TitleScene* titleScene = nullptr;
 	reset* resetScene = nullptr;
+	GameClear* gameclear = nullptr;
 
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
@@ -68,20 +63,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	primitiveDrawer->Initialize();
 #pragma endregion
 
-	int sceneNo = scene0;
-
-	
-	//タイトルシーンの初期化
+	// タイトルシーンの初期化
 	titleScene = new TitleScene();
 	titleScene->Initialize();
 
-	//説明シーンの初期化
+	// 説明シーンの初期化
 	resetScene = new reset();
 	resetScene->Initialize();
 
 	// ゲームシーンの初期化
 	gameScene = new GameScene();
 	gameScene->Initialize();
+
+	// ゲームクリアの初期化
+	gameclear = new GameClear();
+	gameclear->Initialize();
+
+	SCENE sceneNo = SCENE::Title;
 
 	// メインループ
 	while (true) {
@@ -94,77 +92,86 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		imguiManager->Begin();
 		// 入力関連の毎フレーム処理
 		input->Update();
-		
+
 		switch (sceneNo) {
-		case scene0:
-			if (input->PushKey(DIK_SPACE)) {
-				sceneNo = scene1;
-			}
-			break;
-		case scene1:
-			if (input->PushKey(DIK_SPACE)) {
-				sceneNo = scene2;
-			}
-			break;
-		case scene2:
+		case SCENE::Title:
 
+			titleScene->Update();
 
+			if (titleScene->IsSceneEnd() == true) {
+				sceneNo = titleScene->NextScene();
+				resetScene->Start();
+			}
 
 			break;
-		case scene3:
-			if (input->PushKey(DIK_SPACE))
-			{
-				sceneNo = scene0;
+		case SCENE::Reset:
+
+			resetScene->Update();
+
+			if (resetScene->IsSceneEnd() == true) {
+				sceneNo = resetScene->NextScene();
+				gameScene->Start();
+				
 			}
+
 			break;
-		case scene4:
-			if (input->PushKey(DIK_SPACE))
-			{
-				sceneNo = scene0;
+		case SCENE::Game:
+
+			gameScene->Update();
+
+			if (gameScene->IsSceneEnd() == true) {
+				sceneNo = gameScene->NextScene();
+				gameclear->Start();
 			}
+
+			break;
+		case SCENE::Clear:
+
+			gameclear->Update();
+			
+			if (gameclear->IsSceneEnd() == true) {
+				sceneNo = gameclear->NextScene();
+				titleScene->Start();
+			}
+
 			break;
 		}
 
-
-		// タイトルシーンの毎フレーム処理
-		titleScene->Update();
-		//説明シーンの毎フレーム処理
-		resetScene->Update();
-		// ゲームシーンの毎フレーム処理
-		gameScene->Update();
-
+		// titleScene->Update();
+		// resetScene->Update();
+		// gameScene->Update();
+		// gameclear->Update();
 
 		// 軸表示の更新
 		axisIndicator->Update();
 		// ImGui受付終了
 		imguiManager->End();
 
-
-
 		// 描画開始
 		dxCommon->PreDraw();
-
 		switch (sceneNo) {
-		case scene0:
-			// タイトルシーンの描画
+		case SCENE::Title:
 			titleScene->Draw();
 			break;
-		case scene1:
-			// タイトルシーンの描画
+
+		case SCENE::Reset:
 			resetScene->Draw();
+			
 			break;
-		case scene2:
-			// ゲームシーンの描画
+
+		case SCENE::Game:
 			gameScene->Draw();
 			break;
-		case scene3:
-			//ゲームクリアの描画
-			break;
-		case scene4:
-			//ゲームオーバーの描画
+
+		case SCENE::Clear:
+			gameclear->Draw();
 			break;
 		}
 
+		/*titleScene->Draw();
+		resetScene->Draw();
+		gameScene->Draw();
+		gameclear->Draw();*/
 
 		// 軸表示の描画
 		axisIndicator->Draw();

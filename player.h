@@ -40,8 +40,7 @@ public:
 
 	void UpdateReticle(ViewProjection& viewProjection);
 
-
-
+	
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;

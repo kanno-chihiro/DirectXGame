@@ -11,6 +11,7 @@
 #include "skydome.h"
 #include "RailCamera.h"
 #include <fstream>
+
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
@@ -99,6 +100,8 @@ void GameScene::Update() {
 	railCamera_->Update();
 	debugCamera_->Update();
 
+	
+
 	ImGui::Begin("Debug1");
 	// 敵発生処理
 	// LoadEnemyPopData();
@@ -152,6 +155,12 @@ void GameScene::Update() {
 		// ビュープロジェクション行列の更新と転送
 		viewProjection_.UpdateMatrix();
 	}
+
+	// 仮のシーン切り替え
+	if (input_->TriggerKey(DIK_RETURN)) {
+		GameSceneEnd_ = true;
+	}
+	
 }
 
 void GameScene::Draw() {
