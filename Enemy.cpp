@@ -46,6 +46,11 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle,Vector3 position) {
 	Phase_();
 }
 
+void Enemy::RESET() { 
+	worldTransform_.translation_ = {0, 0, 0}; 
+	isDead_ = false;
+}
+
 void Enemy::Fire(Vector3& position_) {
 
 	assert(player_);
@@ -142,6 +147,8 @@ void Enemy::Update() {
 		break;
 	}
 
+	
+
 	// 足し算
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 
@@ -149,9 +156,12 @@ void Enemy::Update() {
 	    worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
 	worldTransform_.TransferMatrix();
+
 }
 
 void Enemy::Draw(ViewProjection& viewProjection) {
-
-	model_->Draw(worldTransform_, viewProjection, EnemytextureHandle_);
+	if (isDead_ == false) {
+		model_->Draw(worldTransform_, viewProjection, EnemytextureHandle_);
+	}
+	//model_->Draw(worldTransform_, viewProjection, EnemytextureHandle_);
 }

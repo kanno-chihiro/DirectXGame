@@ -38,6 +38,7 @@ public:
 	bool ClearSceneEnd_ = false;
 
 	void Start() { TitleSceneEnd_ = false; }
+
  private:
 
 		DirectXCommon* dxCommon_ = nullptr;

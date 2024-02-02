@@ -70,7 +70,7 @@ public: // メンバ関数
 
 	void Start() { GameSceneEnd_ = false; }
 
-	
+	void EnemyRESET() { enemy_->RESET();};
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -125,7 +125,7 @@ private: // メンバ変数
 	bool waitFlag_ = false;
 	int32_t waitTime_ = 0;
 
-	
+	bool SceneFlag = false;
 
 
 	/// <summary>

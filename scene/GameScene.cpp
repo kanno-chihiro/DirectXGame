@@ -18,7 +18,9 @@ GameScene::~GameScene() {
 	delete model_;
 	delete player_;
 	delete debugCamera_;
-	delete enemy_;
+	for (Enemy* enemy : enemies_) {
+		delete enemy_;
+	}
 	delete skydomeModel_;
 	for (EnemyBullet* enemyBullet : enemyBullets_)
 	{
@@ -59,6 +61,7 @@ void GameScene::Initialize() {
 	// 敵キャラの初期化
 	enemy_ = new Enemy();
 	Vector3 enemyPosition(0, 0, 0);
+
 	enemy_->Initialize(model_, EnemytextureHandle_,enemyPosition);
 
 	//敵キャラにゲームシーンを渡す
@@ -85,24 +88,34 @@ void GameScene::Initialize() {
 	// デバックカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 
-	// 軸方向表示の表示を有効にする
-	AxisIndicator::GetInstance()->SetVisible(true);
-	// 軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
-	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
+	//// 軸方向表示の表示を有効にする
+	//AxisIndicator::GetInstance()->SetVisible(true);
+	//// 軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
+	//AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 }
 void GameScene::Update() {
 
+	enemies_.remove_if([](Enemy* enemy) {
+		if (enemy->IsDead()) {
+			delete enemy;
+			return true;
+		}
+		return false;
+	});
 	// 自キャラの更新
 	player_->Update(viewProjection_);
 	enemy_->Update();
+	
+
 	skydome_->Update();
 
 	railCamera_->Update();
 	debugCamera_->Update();
 
 	
+		
 
-	ImGui::Begin("Debug1");
+	//ImGui::Begin("Debug1");
 	// 敵発生処理
 	// LoadEnemyPopData();
 
@@ -114,14 +127,14 @@ void GameScene::Update() {
 
 	// float3入力ボックス
 
-	// ImGui::InputFloat3("InputFloat3", inputFloat3);
+	 //ImGui::InputFloat3("InputFloat3", inputFloat3);
 
-	// float3スライダー
-	ImGui::SliderFloat3("SliderFloat3", inputFloat3, 0.0f, 1.0f);
+	//// float3スライダー
+	//ImGui::SliderFloat3("SliderFloat3", inputFloat3, 0.0f, 1.0f);
 
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 
-	ImGui::End();
+	//ImGui::End();
 
 	// あたり判定
 	CheckAllCollisions();
@@ -157,8 +170,16 @@ void GameScene::Update() {
 	}
 
 	// 仮のシーン切り替え
-	if (input_->TriggerKey(DIK_RETURN)) {
+	/*if (input_->TriggerKey(DIK_RETURN)) {
 		GameSceneEnd_ = true;
+	}*/
+
+	//シーン切り替え
+	if (SceneFlag == true) {
+		GameSceneEnd_ = true;
+	}
+	if (GameSceneEnd_ == true) {
+		SceneFlag = false;
 	}
 	
 }
@@ -193,7 +214,7 @@ void GameScene::Draw() {
 	// 自キャラの描画
 
 	player_->Draw(viewProjection_);
-
+	
 	enemy_->Draw(viewProjection_);
 
 	skydome_->Draw(viewProjection_);
@@ -265,11 +286,11 @@ void GameScene::CheckAllCollisions() {
 #pragma region
 	Vector3 PosA, PosB;
 
-	PosA = enemy_->GetWorldPosition();
-
+	
 	for (PlayerBullet* playerbullet : playerBullets) {
-		// 自弾の座標
 		
+		PosA = enemy_->GetWorldPosition();
+		// 自弾の座標
 		PosB = playerbullet->GetWorldPosition();
 
 		float Dx;
@@ -285,10 +306,12 @@ void GameScene::CheckAllCollisions() {
 
 		distance2 = Dx + Dy + Dz;
 
-		if (distance2 <= (radius2 + radius2) * (radius2 + radius2)) {
+		if (distance2 <= (radius2 + radius2) * (radius2 + radius2)){
    			enemy_->OnCollision();
 
 			playerbullet->OnCollision();
+
+			SceneFlag = true;
 		}
 	}
 
@@ -333,17 +356,18 @@ void GameScene::AddEnemyBullet(EnemyBullet* enemyBullet)
 }
 
 void GameScene::LoadEnemyPopData() {
-	// ファイルを開く
-	std::ifstream file;
-	file.open("Resources/enemyPop.csv");
+	//敵いっぱい出てくる
+	//// ファイルを開く
+	//std::ifstream file;
+	//file.open("Resources/enemyPop.csv");
 
-	assert(file.is_open());
+	//assert(file.is_open());
 
-	// ファイルの内容を文字ストリームにコピー
-	enemyPopCommands << file.rdbuf();
+	//// ファイルの内容を文字ストリームにコピー
+	//enemyPopCommands << file.rdbuf();
 
-	// ファイルを閉じる
-	file.close();
+	//// ファイルを閉じる
+	//file.close();
 }
 
 void GameScene::UpdateEnemyPopCommands() {
@@ -395,6 +419,7 @@ void GameScene::UpdateEnemyPopCommands() {
 
 			// 敵を発生させる
 			EnemySpawn(pos);
+			
 		} else if (word.find("WAIT") == 0) {
 			getline(line_stream, word, ',');
 
@@ -427,16 +452,15 @@ void GameScene::EnemySpawn(Vector3& position) {
 
 // アップデート
 void GameScene::EnemyObjUpdate() {
-	for (Enemy* enemy : enemies_) {
+	/*for (Enemy* enemy : enemies_) {
 		enemy->Update();
-	}
+	}*/
 
 	enemies_.remove_if([](Enemy* enemy_) {
 		if (enemy_->IsDead()) {
 			delete enemy_;
 			return true;
 		}
-
 		return false;
 	});
 
@@ -456,10 +480,9 @@ void GameScene::EnemyObjUpdate() {
 // 描画
 void GameScene::EnemyObjDraw() {
 
-	for (Enemy* enemy : enemies_) {
+	/*for (Enemy* enemy : enemies_) {
 		enemy->Draw(viewProjection_);
-	}
-
+	}*/
 	// 弾の描画
 	for (EnemyBullet* Enemybullet : enemyBullets_) {
 		Enemybullet->Draw(viewProjection_);

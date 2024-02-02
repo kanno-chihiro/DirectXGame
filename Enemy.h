@@ -19,8 +19,13 @@ class GameScene;
 class Enemy {
 public:
 	
+	GameScene* gameScene_ = nullptr;
+
+	Player* player_ = nullptr;
+
 	void Initialize(Model* model, uint32_t textureHandle,Vector3 position);
 
+	void RESET();
 	
 	void Update();
 
@@ -50,7 +55,7 @@ public:
 	
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
-	bool IsDead() const { return isDead_; }
+	bool IsDead() const { return isDead_;}
 
 
 
@@ -80,10 +85,12 @@ private:
 	
 	int32_t fireTimer = 0;
 
-	
-	Player* player_ = nullptr;
+	static const int32_t kLifeTime = 60 * 5;
 
-	GameScene* gameScene_ = nullptr;
+	int32_t deathTimer = kLifeTime;
+	
+
+	
 
 	bool isDead_ = false;
 };

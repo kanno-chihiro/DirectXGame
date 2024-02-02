@@ -26,7 +26,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
-	win->CreateGameWindow(L"LE2C_09_カンノ_チヒロ");
+	win->CreateGameWindow(L"LE2D_08_カンノ_チヒロ_UNIVERSE");
 
 	// DirectX初期化処理
 	dxCommon = DirectXCommon::GetInstance();
@@ -34,8 +34,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma region 汎用機能初期化
 	// ImGuiの初期化
-	ImGuiManager* imguiManager = ImGuiManager::GetInstance();
-	imguiManager->Initialize(win, dxCommon);
+	//ImGuiManager* imguiManager = ImGuiManager::GetInstance();
+	//imguiManager->Initialize(win, dxCommon);
 
 	// 入力の初期化
 	input = Input::GetInstance();
@@ -89,7 +89,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		// ImGui受付開始
-		imguiManager->Begin();
+	//	imguiManager->Begin();
 		// 入力関連の毎フレーム処理
 		input->Update();
 
@@ -132,6 +132,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			if (gameclear->IsSceneEnd() == true) {
 				sceneNo = gameclear->NextScene();
 				titleScene->Start();
+				gameScene->EnemyRESET();
 			}
 
 			break;
@@ -143,9 +144,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// gameclear->Update();
 
 		// 軸表示の更新
-		axisIndicator->Update();
+		//axisIndicator->Update();
 		// ImGui受付終了
-		imguiManager->End();
+	//	imguiManager->End();
 
 		// 描画開始
 		dxCommon->PreDraw();
@@ -178,7 +179,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// プリミティブ描画のリセット
 		primitiveDrawer->Reset();
 		// ImGui描画
-		imguiManager->Draw();
+	//	imguiManager->Draw();
 
 		// 描画終了
 		dxCommon->PostDraw();
@@ -188,7 +189,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SafeDelete(gameScene);
 	audio->Finalize();
 	// ImGui解放
-	imguiManager->Finalize();
+//	imguiManager->Finalize();
 
 	// ゲームウィンドウの破棄
 	win->TerminateGameWindow();
